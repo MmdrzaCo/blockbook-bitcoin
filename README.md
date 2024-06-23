@@ -13,6 +13,25 @@
 
 ## Build and installation instructions
 
+- [Update Package](https://github.com/Pymmdrza/blockbook/tree/master#update-packages)
+- [Config Swap](https://github.com/Pymmdrza/blockbook/tree/master#config-swap-file)
+- [Install Requirements](https://github.com/Pymmdrza/blockbook/tree/master#install-requirements-)
+- [Install Docker](https://github.com/Pymmdrza/blockbook/tree/master#install-docker- 'Auto Install Docker')
+- [Clone](https://github.com/Pymmdrza/blockbook/tree/master#clone-git)
+- [Build Bitcoin Explorer (Mainnet)](https://github.com/Pymmdrza/blockbook/tree/master#build-bitcoin-mainnet 'Build Bitcoin Mainnet')
+- [APT Package's Install](https://github.com/Pymmdrza/blockbook/tree/master#apt-install)
+- [Firewall](https://github.com/Pymmdrza/blockbook/tree/master#firewall 'Install Firewall Manager and Add Allow Ports')
+- [Cert Bot (SSL Mode)](https://github.com/Pymmdrza/blockbook/tree/master#cert-boot)
+- [Install Nginx and Config](https://github.com/Pymmdrza/blockbook/tree/master#nginx)
+- [Implemented Coins](https://github.com/Pymmdrza/blockbook/tree/master#implemented-coins)
+
+---
+
+* [Config](/docs/config.md)       -  `Description of Blockbook and back-end configuration and package definitions`
+* [Ports](/docs/ports.md)         –  `Automatically generated registry of ports`
+* [RocksDB](/docs/rocksdb.md)     –  `Description of RocksDB structures used by Blockbook`
+* [API](/docs/api.md)             –  `Description of Blockbook API`
+
 Officially supported platform is **Debian Linux** and **AMD64** architecture.
 
 ### Bitcoin Explorer in (Debian 11 / 12): 
