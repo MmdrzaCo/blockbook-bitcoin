@@ -13,7 +13,7 @@ jobs:
       - name: Checkout Fork
         uses: actions/checkout@v2
         with:
-          ref: master
+          ref: main
           token: ${{ secrets.ACCESS_TOKEN }}
 
       - name: Setup Git
@@ -35,6 +35,10 @@ jobs:
       - name: Merge Upstream Changes
         run: |
           git merge upstream/master --allow-unrelated-histories --strategy ours
-          git push origin master
+          git reset --hard upstream/main
+          git push origin main --force
+  
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+
