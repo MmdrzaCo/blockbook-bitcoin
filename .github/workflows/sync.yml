@@ -34,7 +34,7 @@ jobs:
 
       - name: Merge Upstream Changes
         run: |
-          git merge upstream/master --allow-unrelated-histories
+          git merge upstream/master --allow-unrelated-histories --strategy ours
           git push origin master
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
