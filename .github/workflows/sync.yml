@@ -35,8 +35,8 @@ jobs:
       - name: Merge Upstream Changes
         run: |
           git merge upstream/master --allow-unrelated-histories --strategy ours
-          git reset --hard upstream/main
-          git push origin main --force
+          git reset --hard upstream/master
+          git push origin main
   
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
