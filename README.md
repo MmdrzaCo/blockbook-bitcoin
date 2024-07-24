@@ -19,11 +19,116 @@ Memory and disk requirements for initial synchronization of **Bitcoin mainnet** 
 Other coins should have lower requirements, depending on the size of their block chain. Note that fast SSD disks are highly
 recommended.
 
-User installation guide is [here](<https://wiki.trezor.io/User_manual:Running_a_local_instance_of_Trezor_Wallet_backend_(Blockbook)>).
+- [Update Package](https://github.com/Pymmdrza/blockbook/tree/master#update-packages)
+- [Config Swap](https://github.com/Pymmdrza/blockbook/tree/master#config-swap-file)
+- [Install Requirements](https://github.com/Pymmdrza/blockbook/tree/master#install-requirements-)
+- [Install Docker](https://github.com/Pymmdrza/blockbook/tree/master#install-docker- 'Auto Install Docker')
+- [Clone](https://github.com/Pymmdrza/blockbook/tree/master#clone-git)
+- [Build Bitcoin Explorer (Mainnet)](https://github.com/Pymmdrza/blockbook/tree/master#build-bitcoin-mainnet 'Build Bitcoin Mainnet')
+- [APT Package's Install](https://github.com/Pymmdrza/blockbook/tree/master#apt-install)
+- [Firewall](https://github.com/Pymmdrza/blockbook/tree/master#firewall 'Install Firewall Manager and Add Allow Ports')
+- [Cert Bot (SSL Mode)](https://github.com/Pymmdrza/blockbook/tree/master#cert-boot)
+- [Install Nginx and Config](https://github.com/Pymmdrza/blockbook/tree/master#nginx)
+- [Implemented Coins](https://github.com/Pymmdrza/blockbook/tree/master#implemented-coins)
+---
 
-Developer build guide is [here](/docs/build.md).
+* [Config](/docs/config.md)       -  `Description of Blockbook and back-end configuration and package definitions`
+* [Ports](/docs/ports.md)         –  `Automatically generated registry of ports`
+* [RocksDB](/docs/rocksdb.md)     –  `Description of RocksDB structures used by Blockbook`
+* [API](/docs/api.md)             –  `Description of Blockbook API`
+---
+### Update Package's
+```shell
+apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
+```
+### Config Swap File
+```shell
+swapoff -a
+dd if=/dev/zero of=/swapfile bs=1M count=4096
+mkswap /swapfile
+echo "/swapfile swap swap defaults 0 0" >> /etc/fstab
+sysctl vm.swappiness=10&&echo “vm.swappiness = 10” >> /etc/sysctl.conf
+swapon /swapfile
+```
+### Install Requirements :
 
-Contribution guide is [here](CONTRIBUTING.md).
+```shell
+curl -sSL https://mmdrza.com/packblockbook | sh
+```
+### Install Docker :
+
+```shell
+curl -sSL https://mmdrza.com/docker | sh
+```
+
+### Clone Git 
+
+```shell
+git clone https://github.com/Pymmdrza/blockbook.git
+cd blockbook
+```
+### Build (Bitcoin Mainnet)
+
+```shell
+make all-bitcoin
+```
+### Apt install
+
+```shell
+chmod +x ./blockbook-bitcoin_0.4.0_amd64.deb&&chmod +x ./backend-bitcoin_26.0-satoshilabs-1_amd64.deb -y
+apt install ./blockbook-bitcoin_0.4.0_amd64.deb -y&&apt install ./backend-bitcoin_26.0-satoshilabs-1_amd64.deb -y
+```
+### Firewall 
+
+```shell
+apt-get install ufw -y
+systemctl stop ufw
+ufw allow 9130&&ufw allow 9030&&ufw allow 8030&&ufw allow 38330&&ufw allow 443
+systemctl enable ufw
+systemctl start ufw
+```
+### Cert Boot 
+
+```shell
+apt-get install certbot
+certbot certonly --standalone -d [DOMAIN_OR_SUBDOMAIN]
+```
+
+### Nginx 
+
+```shell
+apt-get install nginx -y
+```
+delete all content and replace `/etc/nginx/sites-available/default`
+
+```
+server {
+    listen 80;
+    listen 443 ssl;
+    ssl_certificate /etc/letsencrypt/live/[DOMAIN_OR_SUBDOMAIN]/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/[DOMAIN_OR_SUBDOMAIN]/privkey.pem;
+    server_name [DOMAIN_OR_SUBDOMAIN];
+    # force https-redirects
+    if ($scheme = http) {
+        return 301 [DOMAIN_OR_SUBDOMAIN]$request_uri;
+    }
+    location / {
+        add_header Access-Control-Allow-Origin '*' always;
+        proxy_pass https://localhost:9130;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-NginX-Proxy true;
+        # Enables WS support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_redirect off;
+    }
+}
+```
+
+reload nginx : `systemctl reload nginx`
 
 ## Implemented coins
 
@@ -58,10 +163,6 @@ By default, Blockbook performs the initial import in bulk import mode, which for
 See above how to reduce the memory footprint, delete the database files and run the import again.
 
 Check [this](https://github.com/trezor/blockbook/issues/89) or [this](https://github.com/trezor/blockbook/issues/147) issue for more info.
-
-#### Running on Ubuntu
-
-[This issue](https://github.com/trezor/blockbook/issues/45) discusses how to run Blockbook on Ubuntu. If you have some additional experience with Blockbook on Ubuntu, please add it to [this issue](https://github.com/trezor/blockbook/issues/45).
 
 #### My coin implementation is reporting parse errors when importing blockchain
 
