@@ -1,0 +1,36 @@
+name: Sync Fork with Upstream
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Fork
+        uses: actions/checkout@v2
+        with:
+          ref: main
+
+      - name: Setup Git With Action Bot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add Upstream Remote
+        run: git remote add upstream https://github.com/trezor/blockbook.git
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Fetch Upstream
+        run: git fetch upstream
+
+      - name: Merge Upstream Changes
+        run: |
+          git merge upstream/main --allow-unrelated-histories
+          git push origin main
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
